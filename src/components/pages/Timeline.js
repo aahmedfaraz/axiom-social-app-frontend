@@ -1,31 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
+import {
+  addPost,
+  updatePost,
+  deletePost,
+  setCurrent,
+} from "../../actions/userDataActions";
 
-const Timeline = ({ current }) => {
+const Timeline = ({ current, userPosts }) => {
   const [body, setBody] = useState("");
-
-  let myPosts = [
-    {
-      _id: "0",
-      user: "0",
-      body: "Lorem ipsum dolor sit amet.",
-      date: "02-01-2022",
-    },
-    {
-      _id: "1",
-      user: "0",
-      body: "Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet.",
-      date: "02-01-2022",
-    },
-    {
-      _id: "2",
-      user: "0",
-      body: "Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet.",
-      date: "02-01-2022",
-    },
-  ];
-
-  // myPosts = [];
 
   return (
     <div className='timeline'>
@@ -45,25 +28,73 @@ const Timeline = ({ current }) => {
         </div>
         <div className='controls'>
           {!current ? (
-            <input type='submit' value='Add' className='btn add' />
+            <input
+              type='submit'
+              value='Add'
+              className='btn add'
+              onClick={(e) => {
+                e.preventDefault();
+                if (body === "") {
+                  return alert("Enter some text inside body");
+                }
+                addPost({
+                  body,
+                });
+              }}
+            />
           ) : (
             <>
-              <button className='btn update'>Update</button>
-              <button className='btn cancel'>Cancel</button>
+              <button
+                className='btn update'
+                onClick={() => {
+                  if (body === "") {
+                    return alert("Enter some text inside body");
+                  }
+                  updatePost({
+                    body,
+                  });
+                }}
+              >
+                Update
+              </button>
+              <button
+                className='btn cancel'
+                onClick={() => {
+                  setCurrent(null);
+                }}
+              >
+                Cancel
+              </button>
             </>
           )}
         </div>
       </form>
       <h1>My Posts</h1>
-      {myPosts.length > 0 ? (
+      {userPosts && userPosts.length > 0 ? (
         <ul className='posts'>
-          {myPosts.map((post) => (
+          {userPosts.map((post) => (
             <li key={post._id}>
               <small>Add Date: {post.date}</small>
               <p>{post.body}</p>
               <div className='controls'>
-                <button className='btn update'>Update</button>
-                <button className='btn delete'>Delete</button>
+                <button
+                  className='btn update'
+                  onClick={() => {
+                    setCurrent({
+                      body,
+                    });
+                  }}
+                >
+                  Update
+                </button>
+                <button
+                  className='btn delete'
+                  onClick={() => {
+                    deletePost(post._id);
+                  }}
+                >
+                  Delete
+                </button>
               </div>
             </li>
           ))}
@@ -77,6 +108,7 @@ const Timeline = ({ current }) => {
 
 const mapStateToProps = (state) => ({
   current: state.user.current,
+  userPosts: state.user.userPosts,
 });
 
 export default connect(mapStateToProps, null)(Timeline);

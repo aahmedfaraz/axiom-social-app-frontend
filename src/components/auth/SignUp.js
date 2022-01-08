@@ -3,13 +3,21 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { connect } from "react-redux";
 import { signup } from "../../actions/userDataActions";
 
-const SignUp = ({ signup }) => {
+const SignUp = ({ auth, signup }) => {
+  const navigate = useNavigate();
   const [user, setUser] = useState({
     name: "",
     email: "",
     password: "",
     password2: "",
   });
+
+  useEffect(() => {
+    if (localStorage.getItem("axiom-auth-token")) {
+      navigate("/");
+    }
+    // eslint-disable-next-line
+  }, [auth]);
 
   const onChange = (e) => setUser({ ...user, [e.target.name]: e.target.value });
 
@@ -93,4 +101,8 @@ const SignUp = ({ signup }) => {
   );
 };
 
-export default connect(null, { signup })(SignUp);
+const mapStateToProps = (state) => ({
+  auth: state.user.auth,
+});
+
+export default connect(mapStateToProps, { signup })(SignUp);

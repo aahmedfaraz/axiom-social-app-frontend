@@ -1,5 +1,7 @@
 import axios from "axios";
 import {
+  SIGNUP_AND_GET_TOKEN,
+  LOGIN_AND_GET_TOKEN,
   GET_USER_DATA,
   GET_USER_POSTS,
   GET_ALL_POSTS,
@@ -7,14 +9,17 @@ import {
   UPDATE_POST,
   DELETE_POST,
   SET_CURRENT,
-  SET_LOADING,
+  SET_AUTH_LOADING,
+  SET_USER_LOADING,
+  SET_USER_POSTS_LOADING,
+  SET_ALL_POSTS_LOADING,
 } from "./types";
 
 const backendURL = "http://axiom-social-app-backend.herokuapp.com";
 
 // Action to SignUp and Get Token
-export const signup = async (userData) => {
-  setLoading(true);
+export const signup = (userData) => async (dispatch) => {
+  setAuthLoading();
   try {
     const res = await axios({
       method: "POST",
@@ -26,16 +31,21 @@ export const signup = async (userData) => {
     });
     const token = await res.data;
     // Storing Token in Local Storage
-    localStorage.setItem("axiom-auth-token", token);
+    localStorage.setItem("axiom-auth-token", token.token);
+    dispatch({
+      type: SIGNUP_AND_GET_TOKEN,
+      payload: token.token ? true : false,
+    });
+    await getUser();
   } catch (err) {
     console.log("Error ", err);
   }
-  setLoading(false);
+  setAuthLoading(false);
 };
 
 // Action to Login and Get Token
-export const login = async (loginData) => {
-  setLoading(true);
+export const login = (loginData) => async (dispatch) => {
+  setAuthLoading();
   try {
     const res = await axios({
       method: "POST",
@@ -44,16 +54,21 @@ export const login = async (loginData) => {
     });
     const token = await res.data;
     // Storing Token in Local Storage
-    localStorage.setItem("axiom-auth-token", token);
+    localStorage.setItem("axiom-auth-token", token.token);
+    dispatch({
+      type: LOGIN_AND_GET_TOKEN,
+      payload: token.token ? true : false,
+    });
+    await getUser();
   } catch (err) {
     console.log("Error ", err);
   }
-  setLoading(false);
+  setAuthLoading(false);
 };
 
 // Action to Get User Data using Token
 export const getUser = () => async (dispatch) => {
-  setLoading(true);
+  setUserLoading();
   try {
     const res = await axios({
       method: "GET",
@@ -68,17 +83,17 @@ export const getUser = () => async (dispatch) => {
 
     dispatch({
       type: GET_USER_DATA,
-      payload: user,
+      payload: user.user,
     });
   } catch (err) {
     console.log("Error ", err);
   }
-  setLoading(false);
+  setUserLoading(false);
 };
 
 // Action to Get User Posts
 export const getUserPosts = (userID) => async (dispatch) => {
-  setLoading(true);
+  setUserPostsLoading();
   try {
     const res = await axios({
       method: "GET",
@@ -93,17 +108,17 @@ export const getUserPosts = (userID) => async (dispatch) => {
 
     dispatch({
       type: GET_USER_POSTS,
-      payload: userPosts,
+      payload: userPosts.posts,
     });
   } catch (err) {
     console.log("Error ", err);
   }
-  setLoading(false);
+  setUserPostsLoading(false);
 };
 
 // Action to Get All Posts
 export const getAllPosts = () => async (dispatch) => {
-  setLoading(true);
+  setAllPostsLoading();
   try {
     const res = await axios({
       method: "GET",
@@ -118,17 +133,17 @@ export const getAllPosts = () => async (dispatch) => {
 
     dispatch({
       type: GET_ALL_POSTS,
-      payload: allPosts,
+      payload: allPosts.posts,
     });
   } catch (err) {
     console.log("Error ", err);
   }
-  setLoading(false);
+  setAllPostsLoading(false);
 };
 
 // Action to add post
 export const addPost = (postData) => async (dispatch) => {
-  setLoading(true);
+  setUserPostsLoading();
   try {
     const res = await axios({
       method: "POST",
@@ -144,17 +159,17 @@ export const addPost = (postData) => async (dispatch) => {
 
     dispatch({
       type: ADD_POST,
-      payload: post,
+      payload: post.post,
     });
   } catch (err) {
     console.log("Error ", err);
   }
-  setLoading(false);
+  setUserPostsLoading(false);
 };
 
 // Action to update post
 export const updatePost = (updatedPost) => async (dispatch) => {
-  setLoading(true);
+  setUserPostsLoading();
   try {
     const res = await axios({
       method: "PUT",
@@ -172,17 +187,17 @@ export const updatePost = (updatedPost) => async (dispatch) => {
 
     dispatch({
       type: UPDATE_POST,
-      payload: returnedUpdatedPost,
+      payload: returnedUpdatedPost.post,
     });
   } catch (err) {
     console.log("Error ", err);
   }
-  setLoading(false);
+  setUserPostsLoading(false);
 };
 
 // Action to delete post
 export const deletePost = (id) => async (dispatch) => {
-  setLoading(true);
+  setUserPostsLoading();
   try {
     await axios({
       method: "DELETE",
@@ -202,7 +217,7 @@ export const deletePost = (id) => async (dispatch) => {
   } catch (err) {
     console.log("Error ", err);
   }
-  setLoading(false);
+  setUserPostsLoading(false);
 };
 
 // Action to Set Current to Update Post
@@ -212,7 +227,19 @@ export const setCurrent = (post) => ({
 });
 
 // Action to Set Loading
-export const setLoading = (loading) => ({
-  type: SET_LOADING,
+export const setAuthLoading = (loading = true) => ({
+  type: SET_AUTH_LOADING,
+  payload: loading,
+});
+export const setUserLoading = (loading = true) => ({
+  type: SET_USER_LOADING,
+  payload: loading,
+});
+export const setUserPostsLoading = (loading = true) => ({
+  type: SET_USER_POSTS_LOADING,
+  payload: loading,
+});
+export const setAllPostsLoading = (loading = true) => ({
+  type: SET_ALL_POSTS_LOADING,
   payload: loading,
 });
