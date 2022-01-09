@@ -18,7 +18,7 @@ const Login = ({ auth, login, authLoading }) => {
     // eslint-disable-next-line
   }, [auth, authLoading]);
 
-  if (authLoading) return Spinner;
+  if (authLoading) return <Spinner />;
 
   const onChange = (e) => setUser({ ...user, [e.target.name]: e.target.value });
 

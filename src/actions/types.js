@@ -12,5 +12,6 @@ export const SET_AUTH_LOADING = "SET_AUTH_LOADING";
 export const SET_USER_LOADING = "SET_USER_LOADING";
 export const SET_USER_POSTS_LOADING = "SET_USER_POSTS_LOADING";
 export const SET_ALL_POSTS_LOADING = "SET_ALL_POSTS_LOADING";
+export const LOGOUT = "LOGOUT";
 // Menu Data Types
 export const SET_SELECTED = "SET_SELECTED";

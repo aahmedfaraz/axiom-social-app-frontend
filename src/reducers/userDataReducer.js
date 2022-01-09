@@ -12,6 +12,7 @@ import {
   SET_USER_LOADING,
   SET_USER_POSTS_LOADING,
   SET_ALL_POSTS_LOADING,
+  LOGOUT,
 } from "../actions/types";
 
 const initialState = {
@@ -62,12 +63,16 @@ const userDataReducer = (state = initialState, action) => {
       return {
         ...state,
         userPosts: [action.payload, ...state.userPosts],
+        allPosts: [action.payload, ...state.allPosts],
         userPostsLoading: false,
       };
     case UPDATE_POST:
       return {
         ...state,
-        userPosts: state.filter((post) =>
+        userPosts: state.userPosts.map((post) =>
+          post._id === action.payload._id ? action.payload : post
+        ),
+        allPosts: state.allPosts.map((post) =>
           post._id === action.payload._id ? action.payload : post
         ),
         userPostsLoading: false,
@@ -75,7 +80,10 @@ const userDataReducer = (state = initialState, action) => {
     case DELETE_POST:
       return {
         ...state,
-        userPosts: state.filter((post) => post._id !== action.payload._id),
+        userPosts: state.userPosts.filter(
+          (post) => post._id !== action.payload
+        ),
+        allPosts: state.allPosts.filter((post) => post._id !== action.payload),
         userPostsLoading: false,
       };
     case SET_CURRENT:
@@ -102,6 +110,20 @@ const userDataReducer = (state = initialState, action) => {
       return {
         ...state,
         allPostsLoading: action.payload,
+      };
+    case LOGOUT:
+      localStorage.removeItem("axiom-auth-token");
+      return {
+        ...state,
+        user: null,
+        userPosts: null,
+        allPosts: null,
+        current: null,
+        authLoading: false,
+        userLoading: false,
+        userPostsLoading: false,
+        allPostsLoading: false,
+        auth: false,
       };
     default:
       return state;

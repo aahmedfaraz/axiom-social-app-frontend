@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import {
   addPost,
@@ -7,7 +7,14 @@ import {
   setCurrent,
 } from "../../actions/userDataActions";
 
-const Timeline = ({ current, userPosts }) => {
+const Timeline = ({
+  current,
+  userPosts,
+  addPost,
+  updatePost,
+  deletePost,
+  setCurrent,
+}) => {
   const [body, setBody] = useState("");
 
   return (
@@ -22,7 +29,7 @@ const Timeline = ({ current, userPosts }) => {
             type='text'
             name='body'
             value={body}
-            onChange={(e) => setBody(e.value)}
+            onChange={(e) => setBody(e.target.value)}
             placeholder='Enter Post Here'
           />
         </div>
@@ -40,6 +47,7 @@ const Timeline = ({ current, userPosts }) => {
                 addPost({
                   body,
                 });
+                setBody("");
               }}
             />
           ) : (
@@ -51,6 +59,7 @@ const Timeline = ({ current, userPosts }) => {
                     return alert("Enter some text inside body");
                   }
                   updatePost({
+                    id: current.id,
                     body,
                   });
                 }}
@@ -61,6 +70,7 @@ const Timeline = ({ current, userPosts }) => {
                 className='btn cancel'
                 onClick={() => {
                   setCurrent(null);
+                  setBody("");
                 }}
               >
                 Cancel
@@ -81,8 +91,10 @@ const Timeline = ({ current, userPosts }) => {
                   className='btn update'
                   onClick={() => {
                     setCurrent({
+                      id: post._id,
                       body,
                     });
+                    setBody(post.body);
                   }}
                 >
                   Update
@@ -91,6 +103,8 @@ const Timeline = ({ current, userPosts }) => {
                   className='btn delete'
                   onClick={() => {
                     deletePost(post._id);
+                    setCurrent(null);
+                    setBody("");
                   }}
                 >
                   Delete
@@ -111,4 +125,9 @@ const mapStateToProps = (state) => ({
   userPosts: state.user.userPosts,
 });
 
-export default connect(mapStateToProps, null)(Timeline);
+export default connect(mapStateToProps, {
+  addPost,
+  updatePost,
+  deletePost,
+  setCurrent,
+})(Timeline);

@@ -11,19 +11,39 @@ import Timeline from "../pages/Timeline";
 import NewsFeed from "../pages/NewsFeed";
 import Spinner from "./Spinner";
 
-const Home = ({ auth, selected, getUser, user, userPosts, allPosts }) => {
+const Home = ({
+  auth,
+  selected,
+  getUser,
+  getUserPosts,
+  getAllPosts,
+  user,
+  userPosts,
+  allPosts,
+  userLoading,
+  userPostsLoading,
+  allPostsLoading,
+}) => {
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!localStorage.getItem("axiom-auth-token")) {
       navigate("/login");
-      localStorage.removeItem("axiom-auth-token");
     }
-    getUser();
+    if (!user) {
+      getUser();
+    } else {
+      if (user && !userPosts) {
+        getUserPosts(user._id);
+      }
+      if (user && !allPosts) {
+        getAllPosts();
+      }
+    }
     // eslint-disable-next-line
-  }, [auth, user]);
+  }, [auth, user, userPosts, allPosts]);
 
-  if (!user) {
+  if (!user || userLoading || userPostsLoading || allPostsLoading) {
     return <Spinner />;
   }
 
@@ -46,6 +66,11 @@ const mapStateToProps = (state) => ({
   user: state.user.user,
   userPosts: state.user.userPosts,
   allPosts: state.user.allPosts,
+  userLoading: state.user.userLoading,
+  userPostsLoading: state.user.userPostsLoading,
+  allPostsLoading: state.user.allPostsLoading,
 });
 
-export default connect(mapStateToProps, { getUser })(Home);
+export default connect(mapStateToProps, { getUser, getUserPosts, getAllPosts })(
+  Home
+);
