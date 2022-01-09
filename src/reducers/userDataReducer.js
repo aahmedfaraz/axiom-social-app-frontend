@@ -45,6 +45,7 @@ const userDataReducer = (state = initialState, action) => {
       return {
         ...state,
         user: action.payload,
+        auth: true,
         userLoading: false,
       };
     case GET_USER_POSTS:
