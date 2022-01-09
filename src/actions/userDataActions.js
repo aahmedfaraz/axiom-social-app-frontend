@@ -16,7 +16,7 @@ import {
   LOGOUT,
 } from "./types";
 
-const backendURL = "http://axiom-social-app-backend.herokuapp.com";
+const backendURL = "https://axiom-social-app-backend.herokuapp.com";
 
 // Action to SignUp and Get Token
 export const signup = (userData) => async (dispatch) => {
