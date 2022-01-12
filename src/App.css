@@ -289,3 +289,8 @@ main {
 .my-post {
   background-color: rgb(195, 255, 195) !important;
 }
+
+.spinner {
+  padding: 10px;
+  text-align: center;
+}

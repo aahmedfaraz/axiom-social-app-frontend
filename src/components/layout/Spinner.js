@@ -2,7 +2,11 @@ import React from "react";
 import spinner from "../../assets/giffs/spinner.gif";
 
 const Spinner = () => {
-  return <img src={spinner} alt='Loading ...' />;
+  return (
+    <div className='spinner'>
+      <img src={spinner} alt='Loading ...' />
+    </div>
+  );
 };
 
 export default Spinner;
